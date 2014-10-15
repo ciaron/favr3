@@ -13,8 +13,6 @@ class FlickrApiMethod(object):
 
         self.token = tokenfile.token
 
-        self.loaded = False
-
         if nojsoncallback:
             self.nojsoncallback = 1
         else:
@@ -40,8 +38,7 @@ class FlickrApiMethod(object):
             resource_owner_secret=tokenfile.secret
         )
 
-        if self.makeCall():
-            self.loaded = True
+        self.makeCall()
 
     def makeCall(self):
         self.parameters.update(self.getParameters())

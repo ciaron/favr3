@@ -25,4 +25,3 @@ class FlickrFavoritesGetList(FlickrApiMethod):
 			'user_id' : self.user_id
 		}
 		return p
-	
