@@ -1,0 +1,2 @@
+import flickrFaves
+import flickrPeople

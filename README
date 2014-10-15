@@ -1,0 +1,4 @@
+Flickr API client based on requests_oauthlib. Requires a file apikeys as per the link below. 
+Running flickrOAuth.py will generate the token file to allow access. This file needs to exist before (authenticated) calls can be made to the Flickr API
+
+Based on code from: http://mkelsey.com/2011/07/03/Flickr-oAuth-Python-Example
