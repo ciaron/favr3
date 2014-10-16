@@ -39,24 +39,20 @@ class FlickrAPI(object):
 
     def create(self, *args, **kwargs):
         #print "args %r and kwargs %r" % (args, kwargs)
-        #print args[0]
-        #if args[0].startswith('favorites'):
-        #self.parameters.update(self.getParameters())
+
+        # update the API parameters with the arguments we received:
+        self.parameters.update(kwargs)
 
         s = 'flickr.' + args[0].replace('_', '.')
         call_url = self.url + '?method=' + s
-        print call_url
     
+        # make the authenticated call to Flickr
         r = self.oauth.get(call_url, params=self.parameters)
 
         self.content = r.content
         self.json = json.loads(r.content)
-        #print self.content
 
         return self.json
-
-        #else:
-        #    raise AttributeError
 
     def __getattr__(self, attrName):
         # 1. update self.parameters with attrs
