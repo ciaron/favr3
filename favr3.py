@@ -1,34 +1,24 @@
-import flickrFaves
-import flickrPeople
-from flickrCheckToken import FlickrAuthOAuthCheckToken
-
-q=FlickrAuthOAuthCheckToken()
-
-if q.json['stat'] == 'ok':
-    user_id = q.json['oauth']['user']['nsid']
-else:
-    exit()
-
-q=flickrFaves.FlickrFavoritesGetList(user_id=user_id)
-
-if q.json['stat'] == 'ok':
-    print q.json['photos']['total']
-    print 'OK'
-
-# hypothetical:
+from flask import Flask
+from flask import render_template
+from flask_bootstrap import Bootstrap
 from flickrAPI import FlickrAPI
+
+app = Flask(__name__)
 flickr = FlickrAPI()
-q1 = flickr.auth_oauth_checkToken()
-q1 = flickr.favorites_getList(user_id=user_id)
 
-flickr.favorites_getPublicList(user_id='whatever')
+@app.route('/')
+def index():
+    return 'welcome to favr3!'
 
-In [4]: import flickrAPI
+@app.route('/user/')
+@app.route('/user/<user_id>')
+def faves(user_id=None):
+    """ show faves for user=<user_id>
+    """
+    faves = flickr.favorites_getList(user_id=flickr.user_id, page=1, per_page=20)
+    
+    return render_template('faves.html', user_id=user_id, faves=faves)
 
-In [5]: reload(flickrAPI)
-Out[5]: <module 'flickrAPI' from 'flickrAPI.pyc'>
-
-In [6]: flickr = flickrAPI.FlickrAPI()
-
-In [7]: flickr.favorites_getList(user_id="test")
-args ('favorites_getList',) and kwargs {'user_id': 'test'}
+if __name__ == '__main__':
+    Bootstrap(app)
+    app.run(debug=True)
