@@ -36,9 +36,7 @@ class FlickrAPI(object):
             resource_owner_secret=self.tokenfile.secret
         )
 
-
     def create(self, *args, **kwargs):
-        #print "args %r and kwargs %r" % (args, kwargs)
 
         # update the API parameters with the arguments we received:
         self.parameters.update(kwargs)
@@ -55,9 +53,4 @@ class FlickrAPI(object):
         return self.json
 
     def __getattr__(self, attrName):
-        # 1. update self.parameters with attrs
-
-        # 2. create (and call) the function
-
         return functools.partial(self.create, attrName)
-
