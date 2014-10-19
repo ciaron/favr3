@@ -14,14 +14,12 @@
 {% endblock %}
 
 {% block content %}
-<title>Hello from Flask</title>
+<title>FAVR3</title>
 {% if user_id %}
-  <h1>Hello {{ user_id }}!</h1>
+  <h1>{{ username }}'s favourites on Flickr</h1>
 {% else %}
   <h1>Hello World!</h1>
 {% endif %}
-
-Favourites (thumbnails):<br/>
 
 <div class="container-fluid">
   <div class="row">
@@ -30,11 +28,23 @@ Favourites (thumbnails):<br/>
 
         {% for photo in faves.photos.photo %}
         <div class="col-xs-6 col-md-3">
-          <a href="#" class="thumbnail">
-            <img data-src="holder.js/150x150" title="{{ photo.title }} by {{ photo.owner }}" alt="{{ photo.title }} by {{ photo.owner }}">
+          <a href="https://www.flickr.com/photos/{{photo.owner}}/{{photo.id}} ">view on flickr</a>
+          <a href="{{ url_for('faves', user_id=photo.owner) }}?page=1" class="thumbnail" style="height:250px;">
+<!--            <img data-src="holder.js/150x150" title="{{ photo.title }} by {{ photo.owner }}" alt="{{ photo.title }} by {{ photo.owner }}">-->
+            <img src="https://farm{{photo.farm}}.staticflickr.com/{{photo.server}}/{{photo.id}}_{{photo.secret}}_m.jpg" title="{{ photo.title }} by {{ photo.ownername }}" alt="{{ photo.title }} by {{ photo.ownername }}">
           </a>
         </div>
         {% endfor %}
+
+        <ul class="pagination">
+          <li><a href="{{url_for('faves', user_id=user_id)}}?page=1">&laquo;</a></li>
+
+          {% for p in range(1, faves.photos.pages+1) %}
+            <li {%if p|int == request.args.get('page')|int%}class="active"{%endif%}><a href="{{url_for('faves', user_id=user_id)}}?page={{p}}">{{ p }}</a></li>
+          {% endfor %}
+
+          <li><a href="{{url_for('faves', user_id=user_id)}}?page={{faves.photos.pages}}">&raquo;</a></li>
+        </ul>
 
     </div>
 
