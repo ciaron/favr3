@@ -5,7 +5,6 @@ from flask_bootstrap import Bootstrap
 from flickrAPI import FlickrAPI
 
 app = Flask(__name__)
-flickr = FlickrAPI()
 
 @app.route('/')
 def index():
@@ -21,13 +20,19 @@ def faves(user_id=None, page=1):
     except:
         pass
 
+    flickr = FlickrAPI(key=request.cookies.get('oauth_token'), secret=request.cookies.get('oauth_token_secret'))
+
     if user_id == None:
+        # TODO get the logged-in user's ID
         user_id = flickr.user_id
 
-    username = flickr.people_getInfo(user_id=user_id)['person']['username']['_content']
-    faves = flickr.favorites_getList(user_id=user_id, page=page, per_page=12, extras='owner_name')
+    username = flickr.people_getInfo(user_id=user_id)
+    if username['stat'] == 'ok':
     
-    return render_template('faves.html', user_id=user_id, faves=faves, username=username)
+        faves = flickr.favorites_getList(user_id=user_id, page=page, per_page=12, extras='owner_name')
+        return render_template('faves.html', user_id=user_id, faves=faves, username=username['person']['username']['_content'])
+    else:
+        return str(username)
 
 if __name__ == '__main__':
     Bootstrap(app)

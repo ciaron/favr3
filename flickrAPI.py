@@ -8,6 +8,8 @@ class FlickrAPI(object):
     def __init__(self, nojsoncallback=True, format='json', parameters=None, key=None, secret=None):
         self.user_id = '44124394781@N01' #TESTING
         self.apifile = APIKeys()
+        # TODO: the key and secret here are the token/auth keys! make this clear
+        # TODO: add a set_keys() method?
         if key == None:
             self.tokenfile = TokenKeys()
             self.resource_owner_key=self.tokenfile.token
