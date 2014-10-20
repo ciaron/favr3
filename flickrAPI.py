@@ -5,10 +5,17 @@ from flickrKeys import APIKeys, TokenKeys
 
 class FlickrAPI(object):
 
-    def __init__(self, nojsoncallback=True, format='json', parameters=None):
+    def __init__(self, nojsoncallback=True, format='json', parameters=None, key=None, secret=None):
         self.user_id = '44124394781@N01' #TESTING
         self.apifile = APIKeys()
-        self.tokenfile = TokenKeys()
+        if key == None:
+            self.tokenfile = TokenKeys()
+            self.resource_owner_key=self.tokenfile.token
+            self.resource_owner_secret=self.tokenfile.secret
+        else:
+            self.resource_owner_key=key
+            self.resource_owner_secret=secret
+
         self.url = "https://api.flickr.com/services/rest"
 
         if nojsoncallback:
@@ -32,8 +39,8 @@ class FlickrAPI(object):
         self.oauth = OAuth1Session(
             self.apifile.apikey,
             client_secret=self.apifile.apisecret,
-            resource_owner_key=self.tokenfile.token,
-            resource_owner_secret=self.tokenfile.secret
+            resource_owner_key=self.resource_owner_key,
+            resource_owner_secret=self.resource_owner_secret
         )
 
     def create(self, *args, **kwargs):
@@ -48,6 +55,7 @@ class FlickrAPI(object):
         r = self.oauth.get(call_url, params=self.parameters)
 
         self.content = r.content
+        #print r.content
         self.json = json.loads(r.content)
 
         return self.json
