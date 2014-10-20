@@ -1,0 +1,32 @@
+{% extends "bootstrap/base.html" %}
+
+{% block head %}
+{{super()}}
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+{% endblock %}
+{% block scripts %}
+{{super()}}
+<script src="//cdnjs.cloudflare.com/ajax/libs/holder/2.4.0/holder.js"></script>
+{% endblock %}
+
+{% block title %}
+You haven't authorised Flickr yet!
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+  <div class="row">
+
+    <div class="col-xs-12 col-md-12">
+
+        You haven't authorised favr3 to access your Flickr account. 
+        <a href="{{ url_for('auth') }}">click here</a> to authorise favr3 and continue to your Flickr favorites
+        or <a href="{{ url_for('publicfaves') }}">click here</a> to proceed to the public area, starting with a random Flickr user's public favourites.
+    </div>
+
+  </div>
+</div>
+
+
+{% endblock %}

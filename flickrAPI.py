@@ -12,8 +12,8 @@ class FlickrAPI(object):
         # TODO: add a set_keys() method?
         if key == None:
             self.tokenfile = TokenKeys()
-            self.resource_owner_key=self.tokenfile.token
-            self.resource_owner_secret=self.tokenfile.secret
+            self.resource_owner_key=None#self.tokenfile.token
+            self.resource_owner_secret=None#self.tokenfile.secret
         else:
             self.resource_owner_key=key
             self.resource_owner_secret=secret
@@ -38,12 +38,18 @@ class FlickrAPI(object):
         defaults.update(parameters)
         self.parameters = defaults
 
-        self.oauth = OAuth1Session(
-            self.apifile.apikey,
-            client_secret=self.apifile.apisecret,
-            resource_owner_key=self.resource_owner_key,
-            resource_owner_secret=self.resource_owner_secret
-        )
+        if self.resource_owner_key:
+            self.oauth = OAuth1Session(
+                self.apifile.apikey,
+                client_secret=self.apifile.apisecret,
+                resource_owner_key=self.resource_owner_key,
+                resource_owner_secret=self.resource_owner_secret
+            )
+        else:
+            self.oauth = OAuth1Session(
+                self.apifile.apikey,
+                client_secret=self.apifile.apisecret
+            )
 
     def create(self, *args, **kwargs):
 
