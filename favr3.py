@@ -21,6 +21,36 @@ client_secret = keys.apisecret
 
 app = Flask(__name__)
 
+def getcredentials(name):
+    flickr = FlickrAPI()
+    username = None
+    user_id = None
+    # name is either an NSID or username or an email address
+
+    # 1. try user_id
+    r = flickr.people_getInfo(user_id=name)
+
+    if r['stat'] == 'fail':
+        # probably wasn't an NSID, try it as a username
+        # 2. try username
+        r = flickr.people_findByUsername(username=name)
+        if r['stat'] == 'fail':
+            # 3. last try: see if it works as an email address
+            r = flickr.people_findByEmail(find_email=name)
+            print r
+            user_id = r['user']['nsid']
+            username = r['user']['username']['_content']
+            print (user_id, username)
+        else:
+            username = name
+            user_id = r['user']['nsid']
+    else:
+        # use username below
+        username = r['person']['username']['_content']
+        user_id = name
+        #return str({'username': username, 'user_id':user_id})
+    return (username, user_id)
+
 @app.route('/auth')
 def auth():
     flickr = OAuth1Session(keys.apikey, client_secret=keys.apisecret, callback_uri="http://127.0.0.1:5000/callback")
@@ -35,29 +65,9 @@ def auth():
 def publicfaves(user_id=None, page=1):
     flickr = FlickrAPI()
 
-    username = None
-
     if request.method == 'POST':
-        #return "not implemented yet"
-        flickr = FlickrAPI()
         name = str(request.form["name"])
-        # name is either an NSID or username
-        r = flickr.people_getInfo(user_id=name)
-
-        if r['stat'] == 'fail':
-            # probably wasn't an NSID, try it as a username
-            r = flickr.people_findByUsername(username=name)
-            if r['stat'] == 'fail':
-                pass # dunno?
-                return "no user found"
-            else:
-                username = name
-                user_id = r['user']['nsid']
-        else:
-            # use username below
-            username = r['person']['username']['_content']
-            user_id = name
-        #return str({'username': username, 'user_id':user_id})
+        (username, user_id) = getcredentials(name)
 
     if not user_id:
         user_id = flickr.user_id
@@ -78,35 +88,14 @@ def publicfaves(user_id=None, page=1):
 def faves(user_id=None, page=1):
     """ show faves for user=<user_id>
     """
-
-    username = None
+    session.permanent = True
 
     if request.method == 'POST':
-        #return "not implemented yet"
-        flickr = FlickrAPI()
         name = str(request.form["name"])
-        # name is either an NSID or username
-        r = flickr.people_getInfo(user_id=name)
-
-        if r['stat'] == 'fail':
-            # probably wasn't an NSID, try it as a username
-            r = flickr.people_findByUsername(username=name)
-            if r['stat'] == 'fail':
-                pass # dunno?
-                return "no user found"
-            else:
-                username = name
-                user_id = r['user']['nsid']
-        else:
-            # use username below
-            username = r['person']['username']['_content']
-            user_id = name
-        #return str({'username': username, 'user_id':user_id})
+        (username, user_id) = getcredentials(name)
 
     if not request.cookies.get('oauth_token'):
-        #print "NOT AUTHORISED"
         return render_template('choice.html')        
-        #return redirect(url_for('auth'))
 
     else:
         #print "AUTHORISED"
@@ -132,14 +121,17 @@ def faves(user_id=None, page=1):
         if user_id == None:
             # TODO get the logged-in user's ID
             user_id = flickr.user_id
+            user_id = request.cookies.get('user_nsid')
             #print "HERE"
+        r = flickr.people_getInfo(user_id=user_id)
+        username = r['person']['username']['_content']
 
-        if not username:
-            r = flickr.people_getInfo(user_id=user_id)
-            if r['stat'] == 'fail':
-                return "no username!"
-            else:
-                username = r['person']['username']['_content']
+        #if not username:
+        #    r = flickr.people_getInfo(user_id=user_id)
+        #    if r['stat'] == 'fail':
+        #        return "no username!"
+        #    else:
+        #        username = r['person']['username']['_content']
     
         faves = flickr.favorites_getList(user_id=user_id, page=page, per_page=12, extras='owner_name')
         return render_template('faves.html', user_id=user_id, faves=faves, username=username, public=False)
@@ -176,11 +168,11 @@ def callback():
     """
     resp = make_response(redirect(url_for('faves')))
 
-    # save the tokens/info in a cookie
-    resp.set_cookie('user_nsid', oauth_tokens.get('user_nsid'))
-    resp.set_cookie('oauth_token', oauth_tokens.get('oauth_token'))
-    resp.set_cookie('oauth_token_secret', oauth_tokens.get('oauth_token_secret'))
-    resp.set_cookie('username', oauth_tokens.get('username'))
+    # save the tokens/info in a cookie with a 10-year expiry/max-age
+    resp.set_cookie('user_nsid', oauth_tokens.get('user_nsid'), max_age=315360000)
+    resp.set_cookie('oauth_token', oauth_tokens.get('oauth_token'), max_age=315360000)
+    resp.set_cookie('oauth_token_secret', oauth_tokens.get('oauth_token_secret'), max_age=315360000)
+    resp.set_cookie('username', oauth_tokens.get('username'), max_age=315360000)
 
     return resp
 
