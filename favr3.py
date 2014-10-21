@@ -132,7 +132,7 @@ def faves(user_id=None, page=1):
         if user_id == None:
             # TODO get the logged-in user's ID
             user_id = flickr.user_id
-            print "HERE"
+            #print "HERE"
 
         if not username:
             r = flickr.people_getInfo(user_id=user_id)
