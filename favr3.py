@@ -30,34 +30,86 @@ def auth():
     authorization_url = flickr.authorization_url(authorization_base_url, perms="read")
     return redirect(authorization_url)
 
-@app.route('/public/')
-@app.route('/public/<user_id>')
+@app.route('/public/', methods=['GET', 'POST'])
+@app.route('/public/<user_id>', methods=['GET', 'POST'])
 def publicfaves(user_id=None, page=1):
     flickr = FlickrAPI()
+
+    username = None
+
+    if request.method == 'POST':
+        #return "not implemented yet"
+        flickr = FlickrAPI()
+        name = str(request.form["name"])
+        # name is either an NSID or username
+        r = flickr.people_getInfo(user_id=name)
+
+        if r['stat'] == 'fail':
+            # probably wasn't an NSID, try it as a username
+            r = flickr.people_findByUsername(username=name)
+            if r['stat'] == 'fail':
+                pass # dunno?
+                return "no user found"
+            else:
+                username = name
+                user_id = r['user']['nsid']
+        else:
+            # use username below
+            username = r['person']['username']['_content']
+            user_id = name
+        #return str({'username': username, 'user_id':user_id})
+
     if not user_id:
         user_id = flickr.user_id
-    username = flickr.people_getInfo(user_id=user_id)
+    r = flickr.people_getInfo(user_id=user_id)
+    username = r['person']['username']['_content']
+
     try: 
         page = request.args.get('page')
     except:
         pass
 
-    if username['stat'] == 'ok':
+    if r['stat'] == 'ok':
         publicfaves = flickr.favorites_getPublicList(user_id=user_id, page=page, per_page=12, extras='owner_name')
-        return render_template('faves.html', user_id=user_id, faves=publicfaves, username=username['person']['username']['_content'], public=True)
+        return render_template('faves.html', user_id=user_id, faves=publicfaves, username=username, public=True)
 
-@app.route('/')
-@app.route('/<user_id>')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/<user_id>', methods=['GET', 'POST'])
 def faves(user_id=None, page=1):
     """ show faves for user=<user_id>
     """
+
+    username = None
+
+    if request.method == 'POST':
+        #return "not implemented yet"
+        flickr = FlickrAPI()
+        name = str(request.form["name"])
+        # name is either an NSID or username
+        r = flickr.people_getInfo(user_id=name)
+
+        if r['stat'] == 'fail':
+            # probably wasn't an NSID, try it as a username
+            r = flickr.people_findByUsername(username=name)
+            if r['stat'] == 'fail':
+                pass # dunno?
+                return "no user found"
+            else:
+                username = name
+                user_id = r['user']['nsid']
+        else:
+            # use username below
+            username = r['person']['username']['_content']
+            user_id = name
+        #return str({'username': username, 'user_id':user_id})
+
     if not request.cookies.get('oauth_token'):
-        print "NOT AUTHORISED"
+        #print "NOT AUTHORISED"
         return render_template('choice.html')        
         #return redirect(url_for('auth'))
 
     else:
-        print "AUTHORISED"
+        #print "AUTHORISED"
         # we'll try an authenticated call, to see if the token has been revoked or not
         flickr = FlickrAPI(key=request.cookies.get('oauth_token'), secret=request.cookies.get('oauth_token_secret'))
         info = flickr.test_login() # requires authentication with 'read' permissions
@@ -80,16 +132,19 @@ def faves(user_id=None, page=1):
         if user_id == None:
             # TODO get the logged-in user's ID
             user_id = flickr.user_id
+            print "HERE"
 
-        username = flickr.people_getInfo(user_id=user_id)
-        if username['stat'] == 'ok':
+        if not username:
+            r = flickr.people_getInfo(user_id=user_id)
+            if r['stat'] == 'fail':
+                return "no username!"
+            else:
+                username = r['person']['username']['_content']
     
-            faves = flickr.favorites_getList(user_id=user_id, page=page, per_page=12, extras='owner_name')
-            return render_template('faves.html', user_id=user_id, faves=faves, username=username['person']['username']['_content'], public=False)
-        else:
-            return str(username)
+        faves = flickr.favorites_getList(user_id=user_id, page=page, per_page=12, extras='owner_name')
+        return render_template('faves.html', user_id=user_id, faves=faves, username=username, public=False)
 
-    return "TEST"
+    return "FAIL"
 
 @app.route("/callback", methods=["GET"])
 def callback():
