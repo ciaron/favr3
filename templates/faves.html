@@ -22,7 +22,9 @@
 {% else %}
   <h1>Hello World!</h1>
 {% endif %}
+{% if not public %}
   <p>Back to <a href="{{ url_for('faves')}}">my favourites</a></p>
+{% endif %}
 
   <div class="row">
 
@@ -32,10 +34,13 @@
       {% for photo in faves.photos.photo %}
       <div class="col-xs-6 col-md-3">
         <div class="thumbnail"  style="height:325px; width:275px;">
-<!--          <a href="https://www.flickr.com/photos/{{photo.owner}}/{{photo.id}}" title="view on flickr"><i class="fa fa-flickr"></i></a>
-          <a href="https://www.flickr.com/photos/{{photo.owner}}" title="see user on flickr"><i class="fa fa-user"></i></a>-->
+
+{% if public %}
+          <a href="{{ url_for('publicfaves', user_id=photo.owner) }}?page=1">
+{% else %}
           <a href="{{ url_for('faves', user_id=photo.owner) }}?page=1">
-<!--            <img data-src="holder.js/150x150" title="{{ photo.title }} by {{ photo.owner }}" alt="{{ photo.title }} by {{ photo.owner }}">-->
+{% endif %}
+
             <img src="https://farm{{photo.farm}}.staticflickr.com/{{photo.server}}/{{photo.id}}_{{photo.secret}}_m.jpg" title="{% if photo.title %}{{photo.title}}{% else %}untitled{% endif%} by {{ photo.ownername }}" alt="{% if photo.title %}{{photo.title}}{% else %}untitled{% endif%} by {{ photo.ownername }}">
           </a>
           <div class="caption">
@@ -60,9 +65,15 @@
             {% endfor %}
           {% else %}
             {# just do FIRST PREV n/m NEXT LAST #}
+{% if public %}
+              <li><a href="{{url_for('publicfaves', user_id=user_id)}}?page={{faves.photos.page-1}}">PREV</a></li>
+              <li class="disabled"><a href='#'>page {{faves.photos.page}} of {{ faves.photos.pages }}</a></li>
+              <li><a href="{{url_for('publicfaves', user_id=user_id)}}?page={{faves.photos.page+1}}">NEXT</a></li>
+{% else %}
               <li><a href="{{url_for('faves', user_id=user_id)}}?page={{faves.photos.page-1}}">PREV</a></li>
               <li class="disabled"><a href='#'>page {{faves.photos.page}} of {{ faves.photos.pages }}</a></li>
               <li><a href="{{url_for('faves', user_id=user_id)}}?page={{faves.photos.page+1}}">NEXT</a></li>
+{% endif %}
             
           {% endif %}
 

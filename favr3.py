@@ -44,7 +44,7 @@ def publicfaves(user_id=None, page=1):
 
     if username['stat'] == 'ok':
         publicfaves = flickr.favorites_getPublicList(user_id=user_id, page=page, per_page=12, extras='owner_name')
-        return render_template('publicfaves.html', user_id=user_id, publicfaves=publicfaves, username=username['person']['username']['_content'])
+        return render_template('faves.html', user_id=user_id, faves=publicfaves, username=username['person']['username']['_content'], public=True)
 
 @app.route('/')
 @app.route('/<user_id>')
@@ -85,7 +85,7 @@ def faves(user_id=None, page=1):
         if username['stat'] == 'ok':
     
             faves = flickr.favorites_getList(user_id=user_id, page=page, per_page=12, extras='owner_name')
-            return render_template('faves.html', user_id=user_id, faves=faves, username=username['person']['username']['_content'])
+            return render_template('faves.html', user_id=user_id, faves=faves, username=username['person']['username']['_content'], public=False)
         else:
             return str(username)
 

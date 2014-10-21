@@ -18,13 +18,24 @@ You haven't authorised Flickr yet!
 <div class="container-fluid">
   <div class="row">
 
-    <div class="col-xs-12 col-md-12">
+    <div class="col-xs-offset-3 col-md-offset-3 col-xs-6 col-md-6">
 
-        You haven't authorised favr3 to access your Flickr account. 
-        <a href="{{ url_for('auth') }}">click here</a> to authorise favr3 and continue to your Flickr favorites
-        or <a href="{{ url_for('publicfaves') }}">click here</a> to proceed to the public area, starting with a random Flickr user's public favourites.
+<div class="jumbotron">
+  <h1>Hello!</h1>
+  <p>You haven't yet given favr3 permission to access your Flickr account. </p>
+  You can either: 
+<ul>
+    <li>connect<sup>1</sup> favr3 with your Flickr account and go to your own favourites</li> or
+    <li>proceed without connecting and start exploring from a random<sup>2</sup> user's Flickr favourites</li>
+</ul>
+</p>
+  <p><a href="{{ url_for('auth') }}" class="btn btn-primary btn-lg" role="button">connect to Flickr</a></p>
+  <p><a href="{{ url_for('publicfaves') }}" class="btn btn-primary btn-lg" role="button">don't connect, see a random Flickr user</a></p>
+</div>
+<p><sup>1</sup>Connecting requires you to give permission for this app (favr3) to read your Flickr account. It won't upload, delete or modify any of your Flickr content, and you can withdraw permission at any time in your Flickr account settings.</p>
+<p><sup>2</sup>for a small value of "random"</p>
+<small>This app is in no way affiliated to Flickr, in case you were wondering. It also uses a cookie to remember you, if you choose to authorise favr3.</small>
     </div>
-
   </div>
 </div>
 
