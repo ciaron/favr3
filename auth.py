@@ -63,7 +63,8 @@ def demo():
             # go and reauthenticate
             pass
 
-    flickr = OAuth1Session(keys.apikey, client_secret=keys.apisecret, callback_uri="http://127.0.0.1:5000/callback")
+    #flickr = OAuth1Session(keys.apikey, client_secret=keys.apisecret, callback_uri="http://127.0.0.1:5000/callback")
+    flickr = OAuth1Session(keys.apikey, client_secret=keys.apisecret, callback_uri="http://ciaron.net/favr/callback")
     fetch_response = flickr.fetch_request_token(request_url)
     session['resource_owner_key'] = fetch_response.get('oauth_token')
     session['resource_owner_secret'] = fetch_response.get('oauth_token_secret')
