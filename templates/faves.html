@@ -66,13 +66,33 @@
           {% else %}
             {# just do FIRST PREV n/m NEXT LAST #}
 {% if public %}
+              {% if faves.photos.page > 10 %}
+                <li><a href="{{url_for('publicfaves', user_id=user_id)}}?page={{faves.photos.page - 10}}">-10</a></li>
+              {% else %}
+                <li class="disabled"><a href="{{url_for('publicfaves', user_id=user_id)}}?page={{faves.photos.page - 10}}">-10</a></li>
+              {% endif %}  
               <li><a href="{{url_for('publicfaves', user_id=user_id)}}?page={{faves.photos.page-1}}">PREV</a></li>
               <li class="disabled"><a href='#'>page {{faves.photos.page}} of {{ faves.photos.pages }}</a></li>
               <li><a href="{{url_for('publicfaves', user_id=user_id)}}?page={{faves.photos.page+1}}">NEXT</a></li>
+              {% if faves.photos.pages - faves.photos.page >= 10 %}
+              <li><a href="{{url_for('publicfaves', user_id=user_id)}}?page={{faves.photos.page + 10}}">+10</a></li>
+              {% else %}
+                <li class="disabled"><a href="{{url_for('publicfaves', user_id=user_id)}}?page={{faves.photos.page + 10}}">+10</a></li>
+              {% endif %}
 {% else %}
+              {% if faves.photos.page > 10 %}
+                <li><a href="{{url_for('faves', user_id=user_id)}}?page={{faves.photos.page - 10}}">-10</a></li>
+              {% else %}
+                <li class="disabled"><a href="{{url_for('faves', user_id=user_id)}}?page={{faves.photos.page - 10}}">-10</a></li>
+              {% endif %}  
               <li><a href="{{url_for('faves', user_id=user_id)}}?page={{faves.photos.page-1}}">PREV</a></li>
               <li class="disabled"><a href='#'>page {{faves.photos.page}} of {{ faves.photos.pages }}</a></li>
               <li><a href="{{url_for('faves', user_id=user_id)}}?page={{faves.photos.page+1}}">NEXT</a></li>
+              {% if faves.photos.pages - faves.photos.page >= 10 %}
+                <li><a href="{{url_for('faves', user_id=user_id)}}?page={{faves.photos.page + 10}}">+10</a></li>
+              {% else %}
+                <li class="disabled"><a href="{{url_for('faves', user_id=user_id)}}?page={{faves.photos.page + 10}}">+10</a></li>
+              {% endif %}
 {% endif %}
             
           {% endif %}
@@ -167,13 +187,33 @@
           {% else %}
             {# just do FIRST PREV n/m NEXT LAST #}
 {% if public %}
+              {% if faves.photos.page > 10 %}
+                <li><a href="{{url_for('publicfaves', user_id=user_id)}}?page={{faves.photos.page - 10}}">-10</a></li>
+              {% else %}
+                <li class="disabled"><a href="{{url_for('publicfaves', user_id=user_id)}}?page={{faves.photos.page - 10}}">-10</a></li>
+              {% endif %}  
               <li><a href="{{url_for('publicfaves', user_id=user_id)}}?page={{faves.photos.page-1}}">PREV</a></li>
               <li class="disabled"><a href='#'>page {{faves.photos.page}} of {{ faves.photos.pages }}</a></li>
               <li><a href="{{url_for('publicfaves', user_id=user_id)}}?page={{faves.photos.page+1}}">NEXT</a></li>
+              {% if faves.photos.pages - faves.photos.page >= 10 %}
+              <li><a href="{{url_for('publicfaves', user_id=user_id)}}?page={{faves.photos.page + 10}}">+10</a></li>
+              {% else %}
+                <li class="disabled"><a href="{{url_for('publicfaves', user_id=user_id)}}?page={{faves.photos.page + 10}}">+10</a></li>
+              {% endif %}
 {% else %}
+              {% if faves.photos.page > 10 %}
+                <li><a href="{{url_for('faves', user_id=user_id)}}?page={{faves.photos.page - 10}}">-10</a></li>
+              {% else %}
+                <li class="disabled"><a href="{{url_for('faves', user_id=user_id)}}?page={{faves.photos.page - 10}}">-10</a></li>
+              {% endif %}  
               <li><a href="{{url_for('faves', user_id=user_id)}}?page={{faves.photos.page-1}}">PREV</a></li>
               <li class="disabled"><a href='#'>page {{faves.photos.page}} of {{ faves.photos.pages }}</a></li>
               <li><a href="{{url_for('faves', user_id=user_id)}}?page={{faves.photos.page+1}}">NEXT</a></li>
+              {% if faves.photos.pages - faves.photos.page >= 10 %}
+                <li><a href="{{url_for('faves', user_id=user_id)}}?page={{faves.photos.page + 10}}">+10</a></li>
+              {% else %}
+                <li class="disabled"><a href="{{url_for('faves', user_id=user_id)}}?page={{faves.photos.page + 10}}">+10</a></li>
+              {% endif %}
 {% endif %}
             
           {% endif %}
